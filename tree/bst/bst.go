@@ -54,23 +54,16 @@ type Tree interface {
 
 type bst struct { node *Node }
 
-// Insert a value into the Tree
-func (t *bst) Insert(v Value) {
-    if t.node == nil {
-        t.node = &Node{v: v}
-    }
-    t.node.insert(v)
-}
+// Insert a value into the Tree. Insertion
+// happens in O(log(n)) time for a balanced tree
+// and O(n) for an unbalanced tree
+func (t *bst) Insert(v Value) { t.node.insert(v) }
 
-func (t *bst) Height() int {
-    if t.node != nil {
-        return t.node.height()
-    }
-    return 0
-}
+// Height return the height of the binary search tree
+func (t *bst) Height() int { return t.node.height() }
 
 // New returns a new binary search tree
-func New() *bst { return &bst{node: nil} }
+func New() *bst { return &bst{} }
 
 func greater(v Value, o Value) bool { return !v.Eq(o) && !v.Less(o) }
 func max(m int, nums ...int) int {
