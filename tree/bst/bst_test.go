@@ -1,7 +1,10 @@
 package bst
 
 import (
-	"testing"
+    "bytes"
+    "fmt"
+    "strings"
+    "testing"
 
     "github.com/stretchr/testify/require"
 )
@@ -28,28 +31,37 @@ func NewInteger(v int) *Integer {
     return &Integer{v: v}
 }
 
-func TestTree_Search(t *testing.T) {
+func TestTree_Height(t *testing.T) {
+    tests := []struct{
+        ints []int
+        expected int
+    } {
+        {[]int{1, 2, 3, 4, 5}, 5},
+        {[]int{1, 2, -1, -2, -3}, 4},
+        {[]int{0, 2, -2, -1}, 3},
+    }
 
-    bst := New()
-    bst.Insert(NewInteger(1))
-    bst.Insert(NewInteger(2))
-    bst.Insert(NewInteger(3))
-    bst.Insert(NewInteger(4))
+    for _, subtest := range tests {
+        name := fmt.Sprintf("Height(%s)=%d", repr(subtest.ints), subtest.expected)
+        t.Run(name, func(t *testing.T) {
+            tree := New()
+            for _, i := range subtest.ints {
+                tree.Insert(NewInteger(i))
+            }
+            require.Equal(t, subtest.expected, tree.Height())
+        })
+    }
+}
 
-    // 1
-    //  \
-    //   2
-    //    \
-    //     3
-    //      \
-    //       4
-    require.Equal(t, 4, bst.Height())
-    bst.Insert(NewInteger(-1))
-    require.Equal(t, 4, bst.Height())
-    bst.Insert(NewInteger(-2))
-    require.Equal(t, 4, bst.Height())
-    bst.Insert(NewInteger(-3))
-    require.Equal(t, 4, bst.Height())
-    bst.Insert(NewInteger(-4))
-    require.Equal(t, 5, bst.Height())
+
+func repr(items []int) string {
+    buf := new(bytes.Buffer)
+    values := make([]string, 0, len(items))
+    for _, item := range items {
+        values = append(values, fmt.Sprintf("%d", item))
+    }
+    buf.WriteString("[")
+    buf.WriteString(strings.Join(values, ","))
+    buf.WriteString("]")
+    return buf.String()
 }
