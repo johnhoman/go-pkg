@@ -14,19 +14,19 @@ type Node struct {
 func (n *Node) insert(v Value) {
 	if n.v == nil {
 		n.v = v
-	} else {
-		if v.Less(n.v) {
-			if n.Left == nil {
-				n.Left = &Node{}
-			}
-			n.Left.insert(v)
+		return
+	}
+	if v.Less(n.v) {
+		if n.Left == nil {
+			n.Left = &Node{}
 		}
-		if greater(v, n.v) {
-			if n.Right == nil {
-				n.Right = &Node{}
-			}
-			n.Right.insert(v)
+		n.Left.insert(v)
+	}
+	if greater(v, n.v) {
+		if n.Right == nil {
+			n.Right = &Node{}
 		}
+		n.Right.insert(v)
 	}
 }
 

@@ -67,7 +67,7 @@ func TestTree_IsBalanced(t *testing.T) {
 	//              \
 	//               1
 	tests := []struct {
-        test     int
+		test     int
 		ints     []int
 		expected bool
 	}{
@@ -75,9 +75,9 @@ func TestTree_IsBalanced(t *testing.T) {
 		{2, []int{0}, true},
 		{3, []int{0, -1, 1}, true},
 		{4, []int{0, -2, -3, -1, 4}, true},
-        {5, []int{0, -2, -3, -1, 4, 2, 1, 6}, true},
-        {6, []int{0, -2, -3, -1, 4, 2, 1}, false},
-        {7, []int{0, -2, 4, 2, 1, 6}, false},
+		{5, []int{0, -2, -3, -1, 4, 2, 1, 6}, true},
+		{6, []int{0, -2, -3, -1, 4, 2, 1}, false},
+		{7, []int{0, -2, 4, 2, 1, 6}, false},
 	}
 
 	for _, subtest := range tests {
