@@ -1,11 +1,11 @@
 package pkg
 
 import (
-    "github.com/johnhoman/go-pkg/tree/bst"
+	"github.com/johnhoman/go-pkg/tree/bst"
 )
 
 var (
-    NewBST = bst.New
+	NewBST = bst.New
 )
 
 var (
