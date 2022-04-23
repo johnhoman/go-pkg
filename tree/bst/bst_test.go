@@ -91,6 +91,42 @@ func TestTree_IsBalanced(t *testing.T) {
 	}
 }
 
+func TestTree_InOrder(t *testing.T) {
+	//            0
+	//          /   \
+	//        -2     4
+	//        / \   / \
+	//      -3  -1 2   6
+	//              \
+	//               1
+	tests := []struct {
+		test     int
+		ints     []int
+		expected []int
+	}{
+		{1, []int{}, []int{}},
+		{2, []int{0}, []int{0}},
+		{3, []int{0, -1, 1}, []int{-1, 0, 1}},
+		{4, []int{0, -2, -3, -1, 4}, []int{-3, -2, -1, 0, 4}},
+		{5, []int{0, -2, -3, -1, 4, 2, 1, 6}, []int{-3, -2, -1, 0, 1, 2, 4, 6}},
+	}
+
+	for _, subtest := range tests {
+		t.Run(fmt.Sprintf("%d", subtest.test), func(t *testing.T) {
+			tree := New()
+			for _, i := range subtest.ints {
+				tree.Insert(NewInteger(i))
+			}
+			expected := make([]int, 0, len(subtest.expected))
+			inOrder := tree.InOrder()
+			for _, item := range inOrder {
+				expected = append(expected, item.(*Integer).v)
+			}
+			require.Equal(t, subtest.expected, expected)
+		})
+	}
+}
+
 func repr(items []int) string {
 	buf := new(bytes.Buffer)
 	values := make([]string, 0, len(items))

@@ -1,5 +1,7 @@
 package bst
 
+import "github.com/johnhoman/go-pkg/stack"
+
 type Value interface {
 	Less(Value) bool
 	Eq(Value) bool
@@ -45,6 +47,24 @@ func (n *Node) height() int {
 	return 1 + m
 }
 
+func (n *Node) inOrder() []Value {
+	items := make([]Value, 0)
+	s := stack.New()
+    current := n
+    for current != nil || !s.IsEmpty() {
+        for current != nil {
+            s.Push(current)
+            current = current.Left
+        }
+        current = s.Pop().(*Node)
+        if current.v != nil {
+            items = append(items, current.v)
+        }
+        current = current.Right
+    }
+	return items
+}
+
 // isBalanced returns true if the tree is a balanced
 // tree. A balanced tree is defined as a binary tree in
 // which the height of the left and right subtree differ
@@ -73,6 +93,9 @@ func (t *bst) Height() int { return t.node.height() }
 
 // IsBalanced returns true if the tree is balanced
 func (t *bst) IsBalanced() bool { return t.node.isBalanced() }
+
+// InOrder returns the in order traversal of the tree
+func (t *bst) InOrder() []Value { return t.node.inOrder() }
 
 // New returns a new binary search tree
 func New() *bst { return &bst{node: &Node{}} }
