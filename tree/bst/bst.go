@@ -19,16 +19,10 @@ func (n *Node) insert(v Value) {
 		return
 	}
 	if v.Less(n.v) {
-		if n.Left == nil {
-			n.Left = &Node{}
-		}
-		n.Left.insert(v)
+        insertOrSet(&n.Left, v)
 	}
 	if greater(v, n.v) {
-		if n.Right == nil {
-			n.Right = &Node{}
-		}
-		n.Right.insert(v)
+        insertOrSet(&n.Right, v)
 	}
 }
 
@@ -79,13 +73,7 @@ type bst struct{ node *Node }
 // Insert a value into the Tree. Insertion
 // happens in O(log(n)) time for a balanced tree
 // and O(n) for an unbalanced tree
-func (t *bst) Insert(v Value) {
-    if t.node == nil {
-        t.node = &Node{v: v}
-    } else {
-        t.node.insert(v)
-    }
-}
+func (t *bst) Insert(v Value) { insertOrSet(&(t.node), v) }
 
 // Height return the height of the binary search tree
 func (t *bst) Height() int { return t.node.height() }
@@ -127,4 +115,11 @@ func isBalanced(n1 *Node, n2 *Node) bool {
 		return false
 	}
 	return true
+}
+
+func insertOrSet(n **Node, v Value) {
+    if *n == nil {
+       *n = &Node{}
+    }
+    (*n).insert(v)
 }
