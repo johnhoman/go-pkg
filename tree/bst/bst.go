@@ -37,14 +37,7 @@ func (n *Node) height() int {
 		return 0
 	}
 
-	m := 0
-	if n.Right != nil {
-		m = max(m, n.Right.height())
-	}
-	if n.Left != nil {
-		m = max(m, n.Left.height())
-	}
-	return 1 + m
+    return max(n.Right.height(), n.Left.height()) + 1
 }
 
 func (n *Node) inOrder() []Value {
@@ -86,7 +79,13 @@ type bst struct{ node *Node }
 // Insert a value into the Tree. Insertion
 // happens in O(log(n)) time for a balanced tree
 // and O(n) for an unbalanced tree
-func (t *bst) Insert(v Value) { t.node.insert(v) }
+func (t *bst) Insert(v Value) {
+    if t.node == nil {
+        t.node = &Node{v: v}
+    } else {
+        t.node.insert(v)
+    }
+}
 
 // Height return the height of the binary search tree
 func (t *bst) Height() int { return t.node.height() }
@@ -98,7 +97,7 @@ func (t *bst) IsBalanced() bool { return t.node.isBalanced() }
 func (t *bst) InOrder() []Value { return t.node.inOrder() }
 
 // New returns a new binary search tree
-func New() *bst { return &bst{node: &Node{}} }
+func New() *bst { return &bst{} }
 
 func greater(v Value, o Value) bool { return !v.Eq(o) && !v.Less(o) }
 func max(m int, nums ...int) int {
