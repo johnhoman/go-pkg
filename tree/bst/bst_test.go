@@ -157,3 +157,37 @@ func TestTree_MaxMin(t *testing.T) {
 		})
 	}
 }
+
+func TestTree_Remove(t *testing.T) {
+	tests := []struct {
+		ints     []int
+		target   int
+		expected []int
+	}{
+		{[]int{}, 0, []int{}},
+		{[]int{0}, 0, []int{}},
+		{[]int{0, -1, 1}, 0, []int{-1, 1}},
+		{[]int{0, -2, -3, -1, 4}, 4, []int{-3, -2, -1, 0}},
+		{[]int{0, -2, -3, -1, 4, 2, 1, 6}, -2, []int{-3, -1, 0, 1, 2, 4, 6}},
+		{[]int{3, 1, 0, 2, 5, 4, 7}, 3, []int{0, 1, 2, 4, 5, 7}},
+	}
+
+	for k, subtest := range tests {
+		t.Run(fmt.Sprintf("%d", k), func(t *testing.T) {
+			tree := New()
+			for _, i := range subtest.ints {
+				tree.Insert(NewInteger(i))
+			}
+			tree.Remove(NewInteger(subtest.target))
+			require.Equal(t, subtest.expected, integerListToInts(tree.InOrder()))
+		})
+	}
+}
+
+func integerListToInts(values []Value) []int {
+	ints := make([]int, 0, len(values))
+	for _, item := range values {
+		ints = append(ints, item.(*Integer).v)
+	}
+	return ints
+}

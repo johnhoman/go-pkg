@@ -26,6 +26,61 @@ func (n *Node) insert(v Value) {
 	}
 }
 
+func (n *Node) remove(v Value) {
+	if n == nil {
+		return
+	}
+	if n.Right == nil && n.Left == nil {
+		//     3            _
+		//   /   \    =>
+		//  _     _
+		// This is node technically a real nil -- *n = nil is not possible
+		n.v = nil
+		return
+	}
+	if n.v.Eq(v) {
+		// (a)     3      (b)  3     (c)    3
+		//       /   \          \          /
+		//      1     5          5        1
+		//     / \   / \        / \      / \
+		//    0   2 4   7      4   7    0   2
+
+		// Removing the root - 3
+		// Result tree
+		//            5
+		//           / \
+		//          4   7
+		//         /
+		//        1
+		//       / \
+		//      0   2
+		l := n.Left
+		r := n.Right
+
+		// (a) - Neither Right nor Left are nil
+		// (b) - Left is nil and Right is non nil
+		// (c) - Right is nil and Left is non nil
+		if l != nil && r != nil {
+			*n = *r
+			prev := n
+			current := n.Left
+			for current != nil {
+				prev = current
+				current = current.Left
+			}
+			prev.Left = l
+		} else {
+			if r != nil { *n = *r } else { *n = *l }
+		}
+	} else {
+		if v.Less(n.v) {
+			n.Left.remove(v)
+		} else {
+			n.Right.remove(v)
+		}
+	}
+}
+
 func (n *Node) height() int {
 	if n == nil {
 		return 0
@@ -96,6 +151,11 @@ type bst struct{ node *Node }
 // happens in O(log(n)) time for a balanced tree
 // and O(n) for an unbalanced tree
 func (t *bst) Insert(v Value) { insertOrSet(&(t.node), v) }
+
+// Remove a value from the Tree. Removal happens
+// in O(log(n)) time for a balanced tree
+// and O(n) for an unbalanced tree
+func (t *bst) Remove(v Value) { t.node.remove(v) }
 
 // Height return the height of the binary search tree
 func (t *bst) Height() int { return t.node.height() }
