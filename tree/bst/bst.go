@@ -63,6 +63,17 @@ func (n *Node) isBalanced() bool {
 	return isBalanced(n.Left, n.Right)
 }
 
+func (n *Node) max() Value {
+	if n == nil {
+		return nil
+	}
+	if n.Right == nil {
+		return n.v
+	} else {
+		return n.Right.max()
+	}
+}
+
 type Tree interface {
 	Search(v Value)
 	Insert(v Value)
@@ -83,6 +94,9 @@ func (t *bst) IsBalanced() bool { return t.node.isBalanced() }
 
 // InOrder returns the in order traversal of the tree
 func (t *bst) InOrder() []Value { return t.node.inOrder() }
+
+// Max returns the max value in the Tree
+func (t *bst) Max() Value { return t.node.max() }
 
 // New returns a new binary search tree
 func New() *bst { return &bst{} }

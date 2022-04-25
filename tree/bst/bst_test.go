@@ -123,3 +123,31 @@ func TestTree_InOrder(t *testing.T) {
 		})
 	}
 }
+
+func TestTree_Max(t *testing.T) {
+	tests := []struct {
+		ints     []int
+		expected interface{}
+	}{
+		{[]int{}, nil},
+		{[]int{0}, 0},
+		{[]int{0, -1, 1}, 1},
+		{[]int{0, -2, -3, -1, 4}, 4},
+		{[]int{0, -2, -3, -1, 4, 2, 1, 6}, 6},
+	}
+
+	for k, subtest := range tests {
+		t.Run(fmt.Sprintf("%d", k), func(t *testing.T) {
+			tree := New()
+			for _, i := range subtest.ints {
+				tree.Insert(NewInteger(i))
+			}
+			switch expected := subtest.expected.(type) {
+			case int:
+				require.Equal(t, expected, tree.Max().(*Integer).v)
+			default:
+				require.Equal(t, expected, tree.Max())
+			}
+		})
+	}
+}
