@@ -38,14 +38,15 @@ func TestTree_Height(t *testing.T) {
 		ints     []int
 		expected int
 	}{
+		{[]int{}, 0},
+		{[]int{1}, 1},
 		{[]int{1, 2, 3, 4, 5}, 5},
 		{[]int{1, 2, -1, -2, -3}, 4},
 		{[]int{0, 2, -2, -1}, 3},
 	}
 
-	for _, subtest := range tests {
-		name := fmt.Sprintf("Height(%s)=%d", repr(subtest.ints), subtest.expected)
-		t.Run(name, func(t *testing.T) {
+	for k, subtest := range tests {
+		t.Run(fmt.Sprintf("%d", k), func(t *testing.T) {
 			tree := New()
 			for _, i := range subtest.ints {
 				tree.Insert(NewInteger(i))
