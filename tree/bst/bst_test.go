@@ -124,6 +124,82 @@ func TestTree_InOrder(t *testing.T) {
 	}
 }
 
+func TestTree_PreOrder(t *testing.T) {
+	//            0
+	//          /   \
+	//        -2     4
+	//        / \   / \
+	//      -3  -1 2   6
+	//              \
+	//               1
+	tests := []struct {
+		ints     []int
+		expected []int
+	}{
+		{[]int{}, []int{}},
+		{[]int{0}, []int{0}},
+		{[]int{0, -1, 1}, []int{0, -1, 1}},
+		{[]int{0, -2, -3, -1, 4}, []int{0, -2, -3, -1, 4}},
+		{[]int{0, -2, -3, -1, 4, 2, 1, 6}, []int{0, -2, -3, -1, 4, 2, 1, 6}},
+	}
+
+	for k, subtest := range tests {
+		t.Run(fmt.Sprintf("%d", k), func(t *testing.T) {
+			tree := New()
+			for _, i := range subtest.ints {
+				tree.Insert(NewInteger(i))
+			}
+			expected := make([]int, 0, len(subtest.expected))
+			for _, item := range tree.PreOrder() {
+				expected = append(expected, item.(*Integer).v)
+			}
+			require.Equal(t, subtest.expected, expected)
+		})
+	}
+}
+
+func TestTree_PostOrder(t *testing.T) {
+	tests := []struct {
+		ints     []int
+		expected []int
+	}{
+		{[]int{}, []int{}},
+		{[]int{0}, []int{0}},
+		//            0
+		//          /   \
+		//        -1     1
+		{[]int{0, -1, 1}, []int{-1, 1, 0}},
+		//            0
+		//          /   \
+		//        -2     4
+		//        / \
+		//      -3  -1
+		{[]int{0, -2, -3, -1, 4}, []int{-3, -1, -2, 4, 0}},
+		//            0
+		//          /   \
+		//        -2     4
+		//        / \   / \
+		//      -3  -1 2   6
+		//              \
+		//               1
+		{[]int{0, -2, -3, -1, 4, 2, 1, 6}, []int{-3, -1, -2, 1, 2, 6, 4, 0}},
+	}
+
+	for k, subtest := range tests {
+		t.Run(fmt.Sprintf("%d", k), func(t *testing.T) {
+			tree := New()
+			for _, i := range subtest.ints {
+				tree.Insert(NewInteger(i))
+			}
+			expected := make([]int, 0, len(subtest.expected))
+			for _, item := range tree.PostOrder() {
+				expected = append(expected, item.(*Integer).v)
+			}
+			require.Equal(t, subtest.expected, expected)
+		})
+	}
+}
+
 func TestTree_MaxMin(t *testing.T) {
 	tests := []struct {
 		ints     []int

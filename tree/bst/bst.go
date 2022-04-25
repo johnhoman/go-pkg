@@ -89,23 +89,24 @@ func (n *Node) height() int {
     return max(n.Right.height(), n.Left.height()) + 1
 }
 
-func (n *Node) inOrder() []Value {
+func (n *Node) traverse(fn visitor) []Value {
 	items := make([]Value, 0)
-	s := stack.New()
-    current := n
-    for current != nil || !s.IsEmpty() {
-        for current != nil {
-            s.Push(current)
-            current = current.Left
-        }
-        current = s.Pop().(*Node)
-        if current.v != nil {
-            items = append(items, current.v)
-        }
-        current = current.Right
-    }
+	fn(n, func(current *Node) *Node {
+		if current.v != nil {
+			items = append(items, current.v)
+		}
+		return current
+	})
 	return items
 }
+
+func (n *Node) inOrder() []Value { return n.traverse(inOrder) }
+
+// preOrder traversal of the tree is root, left, right
+func (n *Node) preOrder() []Value { return n.traverse(preOrder) }
+
+// postOrder traversal of the tree is left, right, root
+func (n *Node) postOrder() []Value { return n.traverse(postOrder) }
 
 // isBalanced returns true if the tree is a balanced
 // tree. A balanced tree is defined as a binary tree in
@@ -166,6 +167,12 @@ func (t *bst) IsBalanced() bool { return t.node.isBalanced() }
 // InOrder returns the in order traversal of the tree
 func (t *bst) InOrder() []Value { return t.node.inOrder() }
 
+// PreOrder returns the pre-order traversal of the tree
+func (t *bst) PreOrder() []Value { return t.node.preOrder() }
+
+// PostOrder returns the post-order traversal of the tree
+func (t *bst) PostOrder() []Value { return t.node.postOrder() }
+
 // Max returns the max value in the Tree
 func (t *bst) Max() Value { return t.node.max() }
 
@@ -211,3 +218,49 @@ func insertOrSet(n **Node, v Value) {
     }
     (*n).insert(v)
 }
+
+type visitor func(n *Node, visit func(*Node) *Node)
+
+func preOrder(n *Node, visit func(*Node) *Node) {
+
+	current := n
+	s := stack.New()
+
+	for current != nil || !s.IsEmpty() {
+		if current != nil {
+			current = visit(current)
+			s.Push(current)
+			current = current.Left
+		} else {
+			current = s.Pop().(*Node)
+			current = current.Right
+		}
+	}
+}
+
+func inOrder(n *Node, visit func(*Node) *Node) {
+
+	s := stack.New()
+	current := n
+
+	for current != nil || !s.IsEmpty() {
+		if current != nil {
+			s.Push(current)
+			current = current.Left
+		} else {
+			current = visit(s.Pop().(*Node))
+			current = current.Right
+		}
+	}
+}
+
+func postOrderRecursive(n *Node, visit func(*Node) *Node) {
+	if n == nil {
+		return
+	}
+	postOrderRecursive(n.Left, visit)
+	postOrderRecursive(n.Right, visit)
+	visit(n)
+}
+
+func postOrder(n *Node, visit func(*Node) *Node) { postOrderRecursive(n, visit) }
