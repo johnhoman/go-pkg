@@ -1,9 +1,7 @@
 package bst
 
 import (
-	"bytes"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -68,21 +66,20 @@ func TestTree_IsBalanced(t *testing.T) {
 	//              \
 	//               1
 	tests := []struct {
-		test     int
 		ints     []int
 		expected bool
 	}{
-		{1, []int{}, true},
-		{2, []int{0}, true},
-		{3, []int{0, -1, 1}, true},
-		{4, []int{0, -2, -3, -1, 4}, true},
-		{5, []int{0, -2, -3, -1, 4, 2, 1, 6}, true},
-		{6, []int{0, -2, -3, -1, 4, 2, 1}, false},
-		{7, []int{0, -2, 4, 2, 1, 6}, false},
+		{[]int{}, true},
+		{[]int{0}, true},
+		{[]int{0, -1, 1}, true},
+		{[]int{0, -2, -3, -1, 4}, true},
+		{[]int{0, -2, -3, -1, 4, 2, 1, 6}, true},
+		{[]int{0, -2, -3, -1, 4, 2, 1}, false},
+		{[]int{0, -2, 4, 2, 1, 6}, false},
 	}
 
-	for _, subtest := range tests {
-		t.Run(fmt.Sprintf("%d", subtest.test), func(t *testing.T) {
+	for k, subtest := range tests {
+		t.Run(fmt.Sprintf("%d", k), func(t *testing.T) {
 			tree := New()
 			for _, i := range subtest.ints {
 				tree.Insert(NewInteger(i))
@@ -101,19 +98,18 @@ func TestTree_InOrder(t *testing.T) {
 	//              \
 	//               1
 	tests := []struct {
-		test     int
 		ints     []int
 		expected []int
 	}{
-		{1, []int{}, []int{}},
-		{2, []int{0}, []int{0}},
-		{3, []int{0, -1, 1}, []int{-1, 0, 1}},
-		{4, []int{0, -2, -3, -1, 4}, []int{-3, -2, -1, 0, 4}},
-		{5, []int{0, -2, -3, -1, 4, 2, 1, 6}, []int{-3, -2, -1, 0, 1, 2, 4, 6}},
+		{[]int{}, []int{}},
+		{[]int{0}, []int{0}},
+		{[]int{0, -1, 1}, []int{-1, 0, 1}},
+		{[]int{0, -2, -3, -1, 4}, []int{-3, -2, -1, 0, 4}},
+		{[]int{0, -2, -3, -1, 4, 2, 1, 6}, []int{-3, -2, -1, 0, 1, 2, 4, 6}},
 	}
 
-	for _, subtest := range tests {
-		t.Run(fmt.Sprintf("%d", subtest.test), func(t *testing.T) {
+	for k, subtest := range tests {
+		t.Run(fmt.Sprintf("%d", k), func(t *testing.T) {
 			tree := New()
 			for _, i := range subtest.ints {
 				tree.Insert(NewInteger(i))
@@ -126,16 +122,4 @@ func TestTree_InOrder(t *testing.T) {
 			require.Equal(t, subtest.expected, expected)
 		})
 	}
-}
-
-func repr(items []int) string {
-	buf := new(bytes.Buffer)
-	values := make([]string, 0, len(items))
-	for _, item := range items {
-		values = append(values, fmt.Sprintf("%d", item))
-	}
-	buf.WriteString("[")
-	buf.WriteString(strings.Join(values, ","))
-	buf.WriteString("]")
-	return buf.String()
 }
