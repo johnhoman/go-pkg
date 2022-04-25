@@ -1,6 +1,10 @@
 package stack
 
-import "github.com/johnhoman/go-pkg/collection"
+import (
+	"container/list"
+
+	"github.com/johnhoman/go-pkg/collection"
+)
 
 type Stack interface {
 	collection.Interface
@@ -10,33 +14,29 @@ type Stack interface {
 }
 
 type stack struct {
-	items []interface{}
+	items *list.List
 }
 
-func (s *stack) Len() int { return len(s.items) }
+func (s *stack) Len() int { return s.items.Len() }
 
-func (s *stack) Push(v interface{}) { s.items = append(s.items, v) }
+func (s *stack) Push(v interface{}) { s.items.PushBack(v) }
 
 func (s *stack) Pop() interface{} {
-	if len(s.items) > 0 {
-		x := s.items[len(s.items)-1]
-		s.items = s.items[:len(s.items)-1]
-		return x
-	}
-	return nil
+	x := s.items.Back()
+	s.items.Remove(x)
+	return x.Value
 }
 
 func (s *stack) Top() interface{} {
-	if s.IsEmpty() {
-		return nil
-	}
-	return s.items[len(s.items)-1]
+	return s.items.Back()
 }
 
-func (s *stack) IsEmpty() bool { return len(s.items) == 0 }
+func (s *stack) IsEmpty() bool { return s.Len() == 0 }
 
 func New() *stack {
-	return &stack{items: make([]interface{}, 0)}
+	s := &stack{items: list.New()}
+	s.items.Init()
+	return s
 }
 
 var _ Stack = &stack{}
