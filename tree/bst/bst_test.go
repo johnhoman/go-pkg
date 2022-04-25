@@ -124,16 +124,17 @@ func TestTree_InOrder(t *testing.T) {
 	}
 }
 
-func TestTree_Max(t *testing.T) {
+func TestTree_MaxMin(t *testing.T) {
 	tests := []struct {
 		ints     []int
-		expected interface{}
+		expectedMax interface{}
+		expectedMin interface{}
 	}{
-		{[]int{}, nil},
-		{[]int{0}, 0},
-		{[]int{0, -1, 1}, 1},
-		{[]int{0, -2, -3, -1, 4}, 4},
-		{[]int{0, -2, -3, -1, 4, 2, 1, 6}, 6},
+		{[]int{}, nil, nil},
+		{[]int{0}, 0, 0},
+		{[]int{0, -1, 1}, 1, -1},
+		{[]int{0, -2, -3, -1, 4}, 4, -3},
+		{[]int{0, -2, -3, -1, 4, 2, 1, 6}, 6, -3},
 	}
 
 	for k, subtest := range tests {
@@ -142,12 +143,17 @@ func TestTree_Max(t *testing.T) {
 			for _, i := range subtest.ints {
 				tree.Insert(NewInteger(i))
 			}
-			switch expected := subtest.expected.(type) {
-			case int:
-				require.Equal(t, expected, tree.Max().(*Integer).v)
-			default:
-				require.Equal(t, expected, tree.Max())
+			fn := func(v interface{}, result Value) {
+				switch expected := v.(type) {
+				case int:
+					require.Equal(t, expected, result.(*Integer).v)
+				default:
+					require.Equal(t, expected, result)
+				}
+
 			}
+			fn(subtest.expectedMax, tree.Max())
+			fn(subtest.expectedMin, tree.Min())
 		})
 	}
 }

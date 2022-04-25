@@ -74,6 +74,17 @@ func (n *Node) max() Value {
 	}
 }
 
+func (n *Node) min() Value {
+	if n == nil {
+		return nil
+	}
+	if n.Left == nil {
+		return n.v
+	} else {
+		return n.Left.min()
+	}
+}
+
 type Tree interface {
 	Search(v Value)
 	Insert(v Value)
@@ -97,6 +108,9 @@ func (t *bst) InOrder() []Value { return t.node.inOrder() }
 
 // Max returns the max value in the Tree
 func (t *bst) Max() Value { return t.node.max() }
+
+// Min returns the min value in the Tree
+func (t *bst) Min() Value { return t.node.min() }
 
 // New returns a new binary search tree
 func New() *bst { return &bst{} }
